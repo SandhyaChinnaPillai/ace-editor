@@ -1,0 +1,49 @@
+Global class JSONController {
+    public List<String> listOfObjects {get;set;}
+    public static List<String> listOfFileds {get;set;}
+    public Boolean displayPopup {get;set;}
+     public Integer flag {get;set;}
+     public ApexPages.StandardController stdCntrlr {get; set;}   
+   
+    public JSONController(){
+       listOfObjects= new List <String>();
+        
+       for ( Schema.SObjectType o : Schema.getGlobalDescribe().values() ){
+           Schema.DescribeSObjectResult objResult = o.getDescribe();
+           listOfObjects.add(((String)objResult.getName()).toLowerCase());
+       }
+    }
+    public void popupRequestMapping(){
+     displayPopup = true;
+     flag=1;
+     }
+ 
+     public void popUpResponseMapping(){
+     displayPopup = true;
+     flag=2;
+     }
+   
+    public JSONController(ApexPages.StandardController controller){
+     stdCntrlr=controller;
+      }
+   
+    webService static List<String> sample(String objectName){
+        listOfFileds= new List <String>();
+       
+        listOfFileds.clear();
+        Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
+        Schema.SObjectType ObjSchema = schemaMap.get(objectName);
+        for(Schema.SobjectField strFld : ObjSchema.getDescribe().fields.getMap().Values())
+           {
+                if(strFld.getDescribe().getType() == Schema.DisplayType.REFERENCE)
+                {
+                  listOfFileds.add((String.valueOf(strFld.getDescribe().getReferenceTo().get(0))).toLowerCase());
+                }
+        }
+        Map<String, Schema.SObjectField> fieldMap = ObjSchema.getDescribe().fields.getMap();
+        for (String fieldName: fieldMap.keySet()){
+                    listOfFileds.add(fieldName.toLowerCase());
+        }
+        return listOfFileds;
+    }
+}

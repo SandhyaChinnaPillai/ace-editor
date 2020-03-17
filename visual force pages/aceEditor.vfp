@@ -1,0 +1,3 @@
+<apex:page >
+    <c:JsonEditor typeOfEditor="Integration_Framework"></c:JsonEditor>
+</apex:page>
